@@ -1,0 +1,24 @@
+{
+  "name": "simple-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "preprocess": "node --max-old-space-size=8192 preprocess.js",
+    "sentences": "node --max-old-space-size=8192 sentences.js",
+    "vocabulary": "node --max-old-space-size=8192 vocabulary.js",
+    "tfidf": "node --max-old-space-size=12288 tfidf.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "brain.js": "^1.5.1",
+    "mathjs": "^5.4.0"
+  },
+  "devDependencies": {
+    "event-stream": "^4.0.1",
+    "jsonstream": "^1.0.3",
+    "stopwords-es": "^0.3.0"
+  }
+}
