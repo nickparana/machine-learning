@@ -29,11 +29,11 @@ class NeuronalNetwork {
         for (let i = 0; i < this.epoch; i++) {
             let d = 0;
             for (; d < maxData; d++) {
-                let input = math.matrix(data[d].input, 'dense');                
+                let input = math.matrix(data[d].input, 'dense');
                 //let output = math.matrix(data[d].target, 'dense');
 
-                let outputs = data[d].target;              
-                
+                let outputs = data[d].target;
+
                 this.forward(input);
 
                 let error = math.zeros(this.outputLayerSize);
@@ -66,6 +66,29 @@ class NeuronalNetwork {
 
     randomMatrix(n, m) {
         return math.matrix(math.random([n, m]));
+    }
+
+    similarity(oneHotVector) {
+        if (!this.W1) {
+            return;
+        }
+        let input = math.matrix(oneHotVector, 'dense');
+        let vector = math.multiply(math.transpose(this.W1), input);
+
+        let e = 0;
+        const wordVectors = this.W1._data.length;
+        let similarities = [];
+        for (; e < wordVectors; e++) {
+            similarities.push(this.cosineSimilarity(vector,  this.W1._data[e]));
+        }
+        return similarities;
+    }
+
+    cosineSimilarity(a, b) {
+        let square = function (arr) {
+            return math.map(arr, val => val * val);
+        };
+        return (math.dot(a, b) / math.multiply(math.sqrt(math.sum(square(a))), math.sqrt(math.sum(square(b)))));
     }
 
 }

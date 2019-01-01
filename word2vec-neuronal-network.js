@@ -38,8 +38,6 @@ class NeuronalNetwork {
                 let dLw1 = math.multiply(math.matrix(this.X._data.map(e => [e])), math.transpose(math.matrix(math.multiply(this.W2, error)._data.map(e => [e]))));
                 this.W1 = math.subtract(this.W1, math.multiply(this.learningRate, dLw1));
                 this.W2 = math.subtract(this.W2, math.multiply(this.learningRate, dLw2));
-                // console.log('error input n°' + d, 'epoch: ', i);
-                // console.log(error._data.map(e => math.abs(math.round(e, 4))));
             }
         }
     }

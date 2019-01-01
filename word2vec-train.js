@@ -1,8 +1,17 @@
 
 const NeuralNetwork = require('./word2vec-neuronal-network');
+const stopwords = require('stopwords-es');
 
-let text = "Como hago para tocar la guitarra.Como hago para tocar la flauta.Como para para tocar la viola.Como hago para tocar la guitarra.Como hago para tocar la flauta y la viola";
-let sentences = text.split('.');
+
+
+this.removeStopwords = function (sentence) {
+    let sentenceWords = sentence.split(' ');
+    let filteredWords = sentenceWords.filter(w => stopwords.indexOf(w) === -1);
+    return filteredWords.join(' ');
+}
+
+let text = "amo la cumbia.odio la cumbia";
+let sentences = text.toLowerCase().split('.').map(this.removeStopwords);
 let vocArr = [];
 
 
@@ -11,14 +20,15 @@ const detokenizeVoc = {};
 const trainingData = [];
 
 this.setup = function () {
-   
+
     // remove duplicates
-    vocArr = text
+    vocArr = text.toLowerCase()
         .replace(/[.]/g, ' ')
         .split(' ')
+        .filter(w => stopwords.indexOf(w) === -1)
         .filter((elem, pos, arr) => {
             return arr.indexOf(elem) == pos;
-        });    
+        });
 
     let s = 0;
     const sentencesMax = sentences.length;
@@ -42,8 +52,8 @@ this.tokenizeVoc = function () {
 this.preprocess = function (sentence) {
     const sentenceArr = sentence.split(' ').map(e => tokenizeVoc[e]);
     const sentenceMaxVoc = sentenceArr.length;
-    // const windowSize = sentenceMaxVoc - 1; // longest
-    const windowSize = 2; // longest
+    const windowSize = sentenceMaxVoc - 1; // longest
+    // const windowSize = 2;
     const windowTotal = windowSize * 2 + 1;
     let v = 0;
     for (; v < sentenceMaxVoc; v++) {
@@ -67,15 +77,16 @@ this.setup();
 const vocSize = vocArr.length;
 const inputLayerSize = vocSize;
 const outputLayerSize = vocSize;
-const hiddenLayerSize = 300;
+const hiddenLayerSize = 50;
 const learningRate = 0.5;
-const batches = 100;
+const batches = 1000;
 
 const nn = new NeuralNetwork(inputLayerSize, hiddenLayerSize, outputLayerSize, learningRate, batches);
 nn.train(trainingData);
 
-let context = "Como hago para";
-let tokenizeContext = context.split(' ').map(e => tokenizeVoc[e]);
+let context = "cumbia";
+let filteredContext = this.removeStopwords(context);
+let tokenizeContext = filteredContext.split(' ').map(e => tokenizeVoc[e]);
 let guessInputs = new Array(...tokenizeContext);
 
 const outputDic = {};
@@ -88,14 +99,14 @@ for (let [key, value] of Object.entries(outputDic)) {
 }
 
 // Create items array
-var items = Object.keys(noDuplicatesOutput).map(function(key) {
+var items = Object.keys(noDuplicatesOutput).map(function (key) {
     return [key, noDuplicatesOutput[key]];
-  });
-  
-  // Sort the array based on the second element
-  items.sort(function(first, second) {
+});
+
+// Sort the array based on the second element
+items.sort(function (first, second) {
     return second[1] - first[1];
-  });
+});
 
 console.log(items);
 
